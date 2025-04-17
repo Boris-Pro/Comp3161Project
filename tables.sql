@@ -25,17 +25,16 @@ CREATE TABLE CourseSection (
     FOREIGN KEY (course_id) REFERENCES Course(course_id)
 );
 
+-- CourseContent Table
 CREATE TABLE CourseContent (
     content_id INT PRIMARY KEY,
     course_section_id INT NOT NULL,
     content_type ENUM('link', 'file', 'slide') NOT NULL,
     content_title VARCHAR(255),
-    content_url TEXT,              -- For links and downloadable files/slides
-    uploaded_file_path TEXT,       -- Optional: for server-stored files
+    content_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (course_section_id) REFERENCES CourseSection(course_section_id)
 );
-
 
 -- CalendarEvent Table
 CREATE TABLE CalendarEvent (
@@ -46,7 +45,7 @@ CREATE TABLE CalendarEvent (
     FOREIGN KEY (course_id) REFERENCES Course(course_id)
 );
 
--- Enrol Table (only for students)
+-- Enrol Table (for students)
 CREATE TABLE Enrol (
     course_id INT,
     student_id INT,
@@ -54,17 +53,17 @@ CREATE TABLE Enrol (
     PRIMARY KEY (course_id, student_id),
     FOREIGN KEY (course_id) REFERENCES Course(course_id),
     FOREIGN KEY (student_id) REFERENCES User(user_id)
-        -- ensure student_id refers only to users with user_type = 'Student'
+        -- Ensure student_id refers to a student
 );
 
--- Teach Table (only for lecturers)
+-- Teach Table (for lecturers)
 CREATE TABLE Teach (
     course_id INT,
     lecturer_id INT,
     PRIMARY KEY (course_id, lecturer_id),
     FOREIGN KEY (course_id) REFERENCES Course(course_id),
     FOREIGN KEY (lecturer_id) REFERENCES User(user_id)
-        -- ensure lecturer_id refers only to users with user_type = 'Lecturer'
+        -- Ensure lecturer_id refers to a lecturer
 );
 
 -- Assignment Table
@@ -75,25 +74,15 @@ CREATE TABLE Assignment (
     FOREIGN KEY (course_id) REFERENCES Course(course_id)
 );
 
--- Submit Table
+-- Submit Table with embedded grade
 CREATE TABLE Submit (
     submission_id INT PRIMARY KEY,
     assignment_id INT NOT NULL,
     student_id INT NOT NULL,
+    assignment_grade DECIMAL(5,2),
     FOREIGN KEY (assignment_id) REFERENCES Assignment(assignment_id),
     FOREIGN KEY (student_id) REFERENCES User(user_id)
-        -- should refer to users with user_type = 'Student'
-);
-
--- GradeAssignment Table
-CREATE TABLE GradeAssignment (
-    submission_id INT,
-    lecturer_id INT,
-    assignment_grade DECIMAL(5,2),
-    PRIMARY KEY (submission_id, lecturer_id),
-    FOREIGN KEY (submission_id) REFERENCES Submit(submission_id),
-    FOREIGN KEY (lecturer_id) REFERENCES User(user_id)
-        -- should refer to users with user_type = 'Lecturer'
+        -- Should refer to users with user_type = 'Student'
 );
 
 -- DiscussionForum Table
@@ -117,20 +106,4 @@ CREATE TABLE DiscussionThread (
     FOREIGN KEY (thread_creator_id) REFERENCES User(user_id)
 );
 
--- DELIMITER $$
 
--- CREATE TRIGGER check_student_enrol_before_insert
--- BEFORE INSERT ON Enrol
--- FOR EACH ROW
--- BEGIN
---   DECLARE userRole VARCHAR(20);
-  
---   SELECT user_type INTO userRole FROM User WHERE user_id = NEW.student_id;
-  
---   IF userRole != 'Student' THEN
---     SIGNAL SQLSTATE '45000' 
---     SET MESSAGE_TEXT = 'Only users with user_type = "Student" can be enrolled in courses.';
---   END IF;
--- END$$
-
--- DELIMITER ;
