@@ -1,30 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
-<body>
-    <h1>Register</h1>
-    <form method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+{% extends 'base.html' %}
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+{% block title %}Register - VLE{% endblock %}
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+{% block content %}
+<h1>Register</h1>
 
-        <label for="type">User Type:</label>
-        <select id="type" name="type" required>
-            <option value="Admin">Admin</option>
-            <option value="Lecturer">Lecturer</option>
-            <option value="Student">Student</option>
-        </select><br><br>
+<form id="registerForm">
+    <label for="user_id">User ID:</label>
+    <input type="text" id="user_id" placeholder="User ID" required><br>
 
-        <button type="submit">Register</button>
-    </form>
-</body>
-</html>
+    <label for="user_name">User Name:</label>
+    <input type="text" id="user_name" placeholder="User Name" required><br>
+
+    <label for="user_email">Email:</label>
+    <input type="email" id="user_email" placeholder="Email" required><br>
+
+    <label for="user_password">Password:</label>
+    <input type="password" id="user_password" placeholder="Password" required><br>
+
+    <label for="user_type">User Type:</label>
+    <select id="user_type" required>
+        <option value="Student">Student</option>
+        <option value="Lecturer">Lecturer</option>
+        <option value="Admin">Admin</option>
+    </select><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#registerForm').submit(function(e) {
+        e.preventDefault();
+        
+        let data = {
+            user_id: $('#user_id').val(),
+            user_name: $('#user_name').val(),
+            user_email: $('#user_email').val(),
+            user_password: $('#user_password').val(),
+            user_type: $('#user_type').val(),
+        };
+
+        $.ajax({
+            url: '/auth/register',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                alert('Registration successful');
+            },
+            error: function(response) {
+                alert('Error: ' + response.responseJSON.message);
+            }
+        });
+    });
+</script>
+
+{% endblock %}

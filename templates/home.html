@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Virtual Learning Environment{% endblock %}
+
+{% block content %}
+    <h1>Welcome{% if user %}, {{ user['user_name'] }}{% else %}{% endif %} to the Virtual Learning Environment</h1>
+
+    {% if user %}
+        <p>Welcome back, {{ user['user_name'] }}! You are now logged in.</p>
+    {% else %}
+        <p>This is the home page. You can log in or register to start using the system.</p>
+    {% endif %}
+
+    <div class="actions">
+        {% if not user %}
+            <a href="/auth/register">Register</a> | 
+            <a href="/auth/login">Login</a>
+        {% else %}
+            <a href="/auth/logout">Logout</a>  
+        {% endif %}
+    </div>
+{% endblock %}
