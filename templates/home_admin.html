@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ user.user_name }} (Admin)</h1>
+<p>You are logged in as an Admin.</p>
+
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}

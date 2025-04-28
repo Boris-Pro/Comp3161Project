@@ -9,10 +9,6 @@ app.config.from_object(Config)
 # Instantiate AuthHandler
 auth_handler = AuthHandler(app.config['SECRET_KEY'])
 
-# Home route
-# @app.route('/')
-# def home():
-#     return render_template('home.html')
 
 # Home Route
 @app.route('/')
@@ -25,7 +21,13 @@ def home():
         return redirect(url_for('login'))  # Redirect to the login page
     
     # If token is valid, render the home page
-    return render_template('home.html', user=current_user)
+    # return render_template('home.html', user=current_user)
+    if current_user['user_type'] == 'Student':
+        return render_template('home_student.html', user=current_user)
+    elif current_user['user_type'] == 'Lecturer':
+        return render_template('home_lecturer.html', user=current_user)
+    elif current_user['user_type'] == 'Admin':
+        return render_template('home_admin.html', user=current_user)
 
 # Register endpoint
 @app.route('/auth/register', methods=['GET', 'POST'])

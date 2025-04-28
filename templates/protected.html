@@ -3,6 +3,6 @@
 {% block title %}Protected Page{% endblock %}
 
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
+<h1>Welcome, {{ user['user_name'] }}!</h1>
 <p>This is a protected page only visible if you are logged in.</p>
 {% endblock %}

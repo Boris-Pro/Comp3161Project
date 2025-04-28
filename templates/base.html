@@ -13,7 +13,13 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/auth/register">Register</a></li>
-                <li><a href="/auth/login">Login</a></li>
+
+                {% if user %}
+                    <li><a href="/auth/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/auth/login">Login</a></li>
+                {% endif %}
+                
             </ul>
         </nav>
     </header>
@@ -21,7 +27,6 @@
     <!-- Main Content -->
     <div class="container">
         {% block content %}
-        <!-- Content from child templates will be injected here -->
         {% endblock %}
     </div>
 
@@ -30,8 +35,5 @@
         <p>&copy; 2025 Virtual Learning Environment</p>
     </footer>
 
-    <script>
-        // Any additional JavaScript can be added here if needed
-    </script>
 </body>
 </html>
