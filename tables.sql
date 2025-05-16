@@ -1,9 +1,9 @@
--- Select Database
+-- Use the correct database
 USE VLE;
 
 -- User Table
 CREATE TABLE User (
-    user_id INT PRIMARY KEY,
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
     user_name VARCHAR(100) NOT NULL,
     user_email VARCHAR(100) UNIQUE NOT NULL,
     user_password VARCHAR(255) NOT NULL,
@@ -16,35 +16,17 @@ CREATE TABLE Course (
     course_name VARCHAR(100) NOT NULL
 );
 
--- CourseSection Table
-CREATE TABLE CourseSection (
-    course_section_id INT PRIMARY KEY,
-    course_code VARCHAR(20) NOT NULL,
-    section_title VARCHAR(255),
-    FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
+-- Teach Table (Only one lecturer per course)
+CREATE TABLE Teach (
+    course_code VARCHAR(20),
+    lecturer_id INT,
+    PRIMARY KEY (course_code, lecturer_id),
+    UNIQUE (course_code), -- Ensure only one lecturer per course
+    FOREIGN KEY (course_code) REFERENCES Course(course_code),
+    FOREIGN KEY (lecturer_id) REFERENCES User(user_id)
 );
 
--- CourseContent Table
-CREATE TABLE CourseContent (
-    content_id INT PRIMARY KEY,
-    course_section_id INT NOT NULL,
-    content_type ENUM('link', 'file', 'slide') NOT NULL,
-    content_title VARCHAR(255),
-    content_url TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_section_id) REFERENCES CourseSection(course_section_id) ON DELETE CASCADE
-);
-
--- CalendarEvent Table
-CREATE TABLE CalendarEvent (
-    event_id INT PRIMARY KEY,
-    course_code VARCHAR(20) NOT NULL,
-    event_date DATE NOT NULL,
-    event_title VARCHAR(255) NOT NULL,
-    FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
-);
-
--- Enrol Table (for students)
+-- Enrol Table (Students registering for courses)
 CREATE TABLE Enrol (
     course_code VARCHAR(20),
     student_id INT,
@@ -54,24 +36,15 @@ CREATE TABLE Enrol (
     FOREIGN KEY (student_id) REFERENCES User(user_id)
 );
 
--- Teach Table (for lecturers)
-CREATE TABLE Teach (
-    course_code VARCHAR(20),
-    lecturer_id INT,
-    PRIMARY KEY (course_code, lecturer_id),
-    FOREIGN KEY (course_code) REFERENCES Course(course_code),
-    FOREIGN KEY (lecturer_id) REFERENCES User(user_id)
-);
-
 -- Assignment Table
 CREATE TABLE Assignment (
-    assignment_id INT PRIMARY KEY,
+    assignment_id INT PRIMARY KEY AUTO_INCREMENT,
     course_code VARCHAR(20) NOT NULL,
     assignment_title VARCHAR(255) NOT NULL,
     FOREIGN KEY (course_code) REFERENCES Course(course_code)
 );
 
--- Submit Table (without submission_id)
+-- Submit Table (Student submissions)
 CREATE TABLE Submit (
     assignment_id INT NOT NULL,
     student_id INT NOT NULL,
@@ -81,18 +54,55 @@ CREATE TABLE Submit (
     FOREIGN KEY (student_id) REFERENCES User(user_id)
 );
 
+-- CourseSection Table
+CREATE TABLE CourseSection (
+    course_section_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_code VARCHAR(20) NOT NULL,
+    section_title VARCHAR(255),
+    FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
+);
+
+-- CourseContent Table
+CREATE TABLE CourseContent (
+    content_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_section_id INT NOT NULL,
+    content_type ENUM('link', 'file', 'slide') NOT NULL,
+    content_title VARCHAR(255),
+    content_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_section_id) REFERENCES CourseSection(course_section_id) ON DELETE CASCADE
+);
+
+-- CalendarEvent Table (For courses)
+CREATE TABLE CalendarEvent (
+    event_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_code VARCHAR(20) NOT NULL,
+    event_date DATE NOT NULL,
+    event_title VARCHAR(255) NOT NULL,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
+);
+
+-- StudentCalendarEvent Table (For filtering student-specific events by date)
+CREATE TABLE StudentCalendarEvent (
+    student_id INT,
+    event_id INT,
+    PRIMARY KEY (student_id, event_id),
+    FOREIGN KEY (student_id) REFERENCES User(user_id),
+    FOREIGN KEY (event_id) REFERENCES CalendarEvent(event_id)
+);
+
 -- DiscussionForum Table
 CREATE TABLE DiscussionForum (
-    forum_id INT PRIMARY KEY,
+    forum_id INT PRIMARY KEY AUTO_INCREMENT,
     course_code VARCHAR(20) NOT NULL,
     forum_title VARCHAR(255) NOT NULL,
     forum_content TEXT,
     FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
 );
 
--- DiscussionThread Table
+-- DiscussionThread Table (Reddit-style nested threads)
 CREATE TABLE DiscussionThread (
-    thread_id INT PRIMARY KEY,
+    thread_id INT PRIMARY KEY AUTO_INCREMENT,
     forum_id INT NOT NULL,
     parent_thread_id INT,
     thread_creator_id INT NOT NULL,

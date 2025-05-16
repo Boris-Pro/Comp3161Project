@@ -6,5 +6,9 @@
 <h1>Welcome, {{ user.user_name }} (Admin)</h1>
 <p>You are logged in as an Admin.</p>
 
+<!-- Add Course Button -->
+<a href="{{ url_for('create_course_page') }}" class="btn">Add Course</a>
+
+<!-- Logout Link -->
 <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}
