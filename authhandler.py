@@ -52,7 +52,7 @@ class AuthHandler:
     def register_user(self, user_id, user_name, user_email, user_password, user_type):
         """
         Registers a new user by saving the user_id, user_name, user_email, user_password, and user_type
-        in the database without hashing the password.
+        in the database.
         """
         connection = get_db_connection()
         cursor = connection.cursor()
@@ -60,7 +60,7 @@ class AuthHandler:
             cursor.execute(
                 "INSERT INTO User (user_id, user_name, user_email, user_password, user_type) "
                 "VALUES (%s, %s, %s, %s, %s)",
-                (user_id, user_name, user_email, user_password, user_type)  # Storing password as plain text
+                (user_id, user_name, user_email, user_password, user_type)  
             )
             connection.commit()
         except Error as e:
@@ -90,4 +90,5 @@ class AuthHandler:
 
         token = self.generate_token(user['user_id'])
         print(f"Generated Token: {token}")  # Debugging line to check the generated token
-        return jsonify({'token': token})
+        return jsonify({'message': 'Login successful','token': token})
+        
