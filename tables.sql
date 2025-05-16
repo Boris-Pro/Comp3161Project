@@ -37,22 +37,22 @@ CREATE TABLE Enrol (
 );
 
 -- Assignment Table
-CREATE TABLE Assignment (
-    assignment_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_code VARCHAR(20) NOT NULL,
-    assignment_title VARCHAR(255) NOT NULL,
-    FOREIGN KEY (course_code) REFERENCES Course(course_code)
-);
+-- CREATE TABLE Assignment (
+--     assignment_id INT PRIMARY KEY AUTO_INCREMENT,
+--     course_code VARCHAR(20) NOT NULL,
+--     assignment_title VARCHAR(255) NOT NULL,
+--     FOREIGN KEY (course_code) REFERENCES Course(course_code)
+-- );
 
 -- Submit Table (Student submissions)
-CREATE TABLE Submit (
-    assignment_id INT NOT NULL,
-    student_id INT NOT NULL,
-    assignment_grade DECIMAL(5,2),
-    PRIMARY KEY (assignment_id, student_id),
-    FOREIGN KEY (assignment_id) REFERENCES Assignment(assignment_id),
-    FOREIGN KEY (student_id) REFERENCES User(user_id)
-);
+-- CREATE TABLE Submit (
+--     assignment_id INT NOT NULL,
+--     student_id INT NOT NULL,
+--     assignment_grade DECIMAL(5,2),
+--     PRIMARY KEY (assignment_id, student_id),
+--     FOREIGN KEY (assignment_id) REFERENCES Assignment(assignment_id),
+--     FOREIGN KEY (student_id) REFERENCES User(user_id)
+-- );
 
 -- CourseSection Table
 CREATE TABLE CourseSection (
@@ -110,4 +110,23 @@ CREATE TABLE DiscussionThread (
     FOREIGN KEY (forum_id) REFERENCES DiscussionForum(forum_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_thread_id) REFERENCES DiscussionThread(thread_id),
     FOREIGN KEY (thread_creator_id) REFERENCES User(user_id)
+);
+
+-- Assignment Table
+CREATE TABLE Assignment (
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_code VARCHAR(20) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    due_date DATE NOT NULL,
+    FOREIGN KEY (course_code) REFERENCES Course(course_code) ON DELETE CASCADE
+);
+
+-- Submit table
+CREATE TABLE Submit (
+    submit_id INT PRIMARY KEY AUTO_INCREMENT,
+    assignment_id INT,
+    student_id INT,
+    grade FLOAT DEFAULT NULL,
+    FOREIGN KEY (assignment_id) REFERENCES Assignment(assignment_id),
+    FOREIGN KEY (student_id) REFERENCES User(user_id)
 );
