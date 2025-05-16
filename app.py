@@ -106,7 +106,7 @@ def get_courses_for_lecturer(lecturer_id):
     return jsonify(courses)
 
 # Register Lecturer to Course
-@app.route('/register/lecturer', methods=['POST'])
+@app.route('/register-course/lecturer', methods=['POST'])
 def register_lecturer_to_course():
     data = request.get_json()
     conn = get_db_connection()
@@ -123,7 +123,7 @@ def register_lecturer_to_course():
         conn.close()
 
 # Register Student to Course
-@app.route('/register/student', methods=['POST'])
+@app.route('/register-student/student', methods=['POST'])
 def register_student_to_course():
     data = request.get_json()
     conn = get_db_connection()
